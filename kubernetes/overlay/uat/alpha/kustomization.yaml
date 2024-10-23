@@ -1,0 +1,7 @@
+bases:
+- ../../../base
+nameSuffix: -alpha
+commonLabels:
+  app: deploy-affiliateorchestration-alpha
+patchesStrategicMerge:
+- patch.yaml

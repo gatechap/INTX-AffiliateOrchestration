@@ -1,0 +1,148 @@
+basePath: /
+definitions:
+  apimodel.BackendResponseInfoArray:
+    properties:
+      apiName:
+        type: string
+      errorCode:
+        type: string
+      message:
+        type: string
+      system:
+        type: string
+      url:
+        type: string
+    type: object
+  apimodel.BackendResponseList:
+    properties:
+      backendResponseInfoArray:
+        items:
+          $ref: '#/definitions/apimodel.BackendResponseInfoArray'
+        type: array
+      size:
+        type: integer
+    type: object
+  apimodel.CpProfile:
+    properties:
+      birthDate:
+        type: string
+      certificateNumber:
+        type: string
+      companyGroup:
+        type: string
+      companyName:
+        type: string
+      email:
+        type: string
+      employeeId:
+        type: string
+      engName:
+        $ref: '#/definitions/apimodel.NameInfo'
+      payroll:
+        type: string
+      thaiName:
+        $ref: '#/definitions/apimodel.NameInfo'
+    type: object
+  apimodel.NameInfo:
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      title:
+        type: string
+    type: object
+  apimodel.RequestCpProfile:
+    properties:
+      businessLine:
+        type: string
+      correlatedId:
+        type: string
+      primResourceValue:
+        type: string
+    required:
+    - businessLine
+    - correlatedId
+    - primResourceValue
+    type: object
+  apimodel.ResponseCpProfile:
+    properties:
+      backendResponseList:
+        $ref: '#/definitions/apimodel.BackendResponseList'
+      cpProfile:
+        $ref: '#/definitions/apimodel.CpProfile'
+      errorCode:
+        type: string
+      message:
+        type: string
+      uuid:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: '[INTX] affiliateorchestration'
+  title: '[INTX] affiliateorchestration Swagger APIs'
+  version: "00.00"
+paths:
+  /cpemployee/cpprofile/primresource:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: X-Channel
+        in: header
+        name: X-Channel
+        type: string
+      - description: X-GatewayType
+        in: header
+        name: X-GatewayType
+        type: string
+      - description: X-LegacyUsername
+        in: header
+        name: X-LegacyUsername
+        type: string
+      - description: X-Username
+        in: header
+        name: X-Username
+        required: true
+        type: string
+      - description: requestInfo
+        in: body
+        name: filter
+        required: true
+        schema:
+          $ref: '#/definitions/apimodel.RequestCpProfile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/apimodel.ResponseCpProfile'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apimodel.ResponseCpProfile'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/apimodel.ResponseCpProfile'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/apimodel.ResponseCpProfile'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/apimodel.ResponseCpProfile'
+      summary: affiliateorchestration
+      tags:
+      - cpprofile-controller
+schemes:
+- http
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

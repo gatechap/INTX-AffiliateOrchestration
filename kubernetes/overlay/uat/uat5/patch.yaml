@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-affiliateorchestration
+  namespace: intcom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-affiliateorchestration
+      env: uat5
+      version: 1.0.0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%   
+  template:
+    metadata:
+      labels:
+        app: deploy-affiliateorchestration
+        env: uat5
+        version: 1.0.0
+    spec:
+      containers:
+      - name: containers-affiliateorchestration
+        env:
+        - name: env
+          value: uat5
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: affiliateorchestration-config
+  namespace: intcom
+data:
+  application.yml: |-
+    application:
+      name: affiliateorchestration
+      profile: uat5
+    server:
+      port: :8080
+    service:
+      -
+        name: "getProductPreferenceList"
+        endpoint: "https://intxgw-uat5.true.th/MGProductInfo/MGProductPreferenceInfo/getProductPreferenceList"
+        system: "INTX"
+        user: "ITSD_INTX"
+        password: "INTXOPER1"
+        connectionTimeout: 5000
+        readTimeout: 15000
+      -
+        name: "getCPProfileByThaiID"
+        endpoint: "http://hrdev/homenew/api/hr/getCPProfileByThaiID"
+        system: "HR(MVP)"
+        apiKey: "6144333066f3e17b3556c1952d639bf6adf7f9c4"
+        apiValue: ""
+        connectionTimeout: 10000
+        readTimeout: 15000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-affiliateorchestration
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  namespace: intcom
+spec:
+  rules:
+  - host: api-affiliateorchestration-uat5.intcom.arctic.true.th
+    http:
+      paths:
+        - backend:
+            serviceName: service-affiliateorchestration
+            servicePort: 80
+          path: /
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-affiliateorchestration
+  namespace: intcom
+  labels:
+    app: service-affiliateorchestration
+    env: uat5
+    version: 1.0.0

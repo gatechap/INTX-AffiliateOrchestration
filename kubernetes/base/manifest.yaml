@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: affiliateorchestration-config
+  namespace: intcom
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-affiliateorchestration
+  namespace: intcom
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deploy-affiliateorchestration
+      env: uat
+      version: 1.0.0
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%   
+  template:
+    metadata:
+      labels:
+        app: deploy-affiliateorchestration
+        env: uat
+        version: 1.0.0
+    spec:
+      containers:
+      - name: containers-affiliateorchestration
+        image: ${image}
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 512Mi
+            ephemeral-storage: 64Mi
+          requests:
+            cpu: 50m
+            memory: 256Mi
+            ephemeral-storage: 32Mi
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /index.html
+            port: 8080
+            scheme: HTTP
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /index.html
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        envFrom:
+        - configMapRef:
+            name: affiliateorchestration-config
+        volumeMounts:
+          - name: affiliateorchestration-config
+            mountPath: /app/configmap/
+            readOnly: true
+      volumes:
+        - name: affiliateorchestration-config
+          configMap:
+            name: affiliateorchestration-config
+      imagePullSecrets:
+      - name: intregcred
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-affiliateorchestration
+  namespace: intcom
+  labels:
+    app: service-affiliateorchestration
+    env: uat
+    version: 1.0.0
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: deploy-affiliateorchestration
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: api-affiliateorchestration
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  namespace: intcom
+spec:
+  rules:
+  - host: aa.intcom.arctic.true.th
+    http:
+      paths:
+        - backend:
+            serviceName: service-affiliateorchestration
+            servicePort: 80
+          path: /

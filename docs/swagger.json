@@ -1,0 +1,226 @@
+{
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "[INTX] affiliateorchestration",
+        "title": "[INTX] affiliateorchestration Swagger APIs",
+        "contact": {},
+        "version": "00.00"
+    },
+    "basePath": "/",
+    "paths": {
+        "/cpemployee/cpprofile/primresource": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "cpprofile-controller"
+                ],
+                "summary": "affiliateorchestration",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "X-Channel",
+                        "name": "X-Channel",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "X-GatewayType",
+                        "name": "X-GatewayType",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "X-LegacyUsername",
+                        "name": "X-LegacyUsername",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "X-Username",
+                        "name": "X-Username",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "requestInfo",
+                        "name": "filter",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/apimodel.RequestCpProfile"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/apimodel.ResponseCpProfile"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apimodel.ResponseCpProfile"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/apimodel.ResponseCpProfile"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/apimodel.ResponseCpProfile"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/apimodel.ResponseCpProfile"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "apimodel.BackendResponseInfoArray": {
+            "type": "object",
+            "properties": {
+                "apiName": {
+                    "type": "string"
+                },
+                "errorCode": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "system": {
+                    "type": "string"
+                },
+                "url": {
+                    "type": "string"
+                }
+            }
+        },
+        "apimodel.BackendResponseList": {
+            "type": "object",
+            "properties": {
+                "backendResponseInfoArray": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/apimodel.BackendResponseInfoArray"
+                    }
+                },
+                "size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "apimodel.CpProfile": {
+            "type": "object",
+            "properties": {
+                "birthDate": {
+                    "type": "string"
+                },
+                "certificateNumber": {
+                    "type": "string"
+                },
+                "companyGroup": {
+                    "type": "string"
+                },
+                "companyName": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "employeeId": {
+                    "type": "string"
+                },
+                "engName": {
+                    "$ref": "#/definitions/apimodel.NameInfo"
+                },
+                "payroll": {
+                    "type": "string"
+                },
+                "thaiName": {
+                    "$ref": "#/definitions/apimodel.NameInfo"
+                }
+            }
+        },
+        "apimodel.NameInfo": {
+            "type": "object",
+            "properties": {
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "apimodel.RequestCpProfile": {
+            "type": "object",
+            "required": [
+                "businessLine",
+                "correlatedId",
+                "primResourceValue"
+            ],
+            "properties": {
+                "businessLine": {
+                    "type": "string"
+                },
+                "correlatedId": {
+                    "type": "string"
+                },
+                "primResourceValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "apimodel.ResponseCpProfile": {
+            "type": "object",
+            "properties": {
+                "backendResponseList": {
+                    "$ref": "#/definitions/apimodel.BackendResponseList"
+                },
+                "cpProfile": {
+                    "$ref": "#/definitions/apimodel.CpProfile"
+                },
+                "errorCode": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "uuid": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}

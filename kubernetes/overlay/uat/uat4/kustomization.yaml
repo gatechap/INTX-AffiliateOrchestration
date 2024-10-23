@@ -1,0 +1,7 @@
+bases:
+- ../../../base
+nameSuffix: -uat4
+commonLabels:
+  app: deploy-affiliateorchestration-uat4
+patchesStrategicMerge:
+- patch.yaml
